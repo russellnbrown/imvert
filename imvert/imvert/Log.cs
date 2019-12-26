@@ -75,48 +75,48 @@ namespace imvert
         }
 
         // Write line does the acrual logging to file & console
+        // Acessed from many threads, so make it synchronized to preserve
+        // output formatting
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void WriteLine(Level lvl, string l)
         {
-            lock (logs)
+
+            if (lvl < minLevelLogged)
+                return;
+
+            Int32 tix = Thread.CurrentThread.ManagedThreadId;
+
+            string lt = "U";
+            switch (lvl)
             {
-
-                if (lvl < minLevelLogged)
-                    return;
-
-                Int32 tix = Thread.CurrentThread.ManagedThreadId;
-
-                string lt = "U";
-                switch (lvl)
-                {
-                    case Level.Debug: lt = "D"; break;
-                    case Level.Nano: lt = "N"; break;
-                    case Level.Error: lt = "E"; break;
-                    case Level.Fatal: lt = "F"; break;
-                    case Level.Info: lt = "I"; break;
-                    case Level.Warn: lt = "W"; break;
-                }
-                string dt = DateTime.Now.ToShortTimeString();
-
-                string outs = String.Format("[ -{0}- {1} ({2})] {3}", lt, dt, tix, l);
-
-                if (logs != null)
-                {
-                    logs.WriteLine(outs);
-                    logs.Flush();
-                }
-
-                if (lvl >= miConsoleLevelLogged)
-                    Console.WriteLine(outs);
-
-
-                if (lvl == Level.Fatal)
-                {
-                    Close();
-                    Environment.ExitCode = -1;
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
-                }
+                case Level.Debug: lt = "D"; break;
+                case Level.Nano: lt = "N"; break;
+                case Level.Error: lt = "E"; break;
+                case Level.Fatal: lt = "F"; break;
+                case Level.Info: lt = "I"; break;
+                case Level.Warn: lt = "W"; break;
             }
+            string dt = DateTime.Now.ToShortTimeString();
+
+            string outs = String.Format("[ -{0}- {1} ({2})] {3}", lt, dt, tix, l);
+
+            if (logs != null)
+            {
+                logs.WriteLine(outs);
+                logs.Flush();
+            }
+
+            if (lvl >= miConsoleLevelLogged)
+                Console.WriteLine(outs);
+
+
+            if (lvl == Level.Fatal)
+            {
+                Close();
+                Environment.ExitCode = -1;
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+
         }
 
         // pretty sure there is a varargs way to do this....
@@ -125,31 +125,31 @@ namespace imvert
         public static void Debug(string fmt, object o1, object o2) { String s = String.Format(fmt, o1, o2); WriteLine(Level.Debug, s); }
         public static void Debug(string fmt, object o1, object o2, object o3) { String s = String.Format(fmt, o1, o2, o3); WriteLine(Level.Debug, s); }
         public static void Debug(string fmt, object o1, object o2, object o3, object o4) { String s = String.Format(fmt, o1, o2, o3, o4); WriteLine(Level.Debug, s); }
- 
+
         public static void Info(string s) { WriteLine(Level.Info, s); }
         public static void Info(string fmt, object o1) { String s = String.Format(fmt, o1); WriteLine(Level.Info, s); }
         public static void Info(string fmt, object o1, object o2) { String s = String.Format(fmt, o1, o2); WriteLine(Level.Info, s); }
         public static void Info(string fmt, object o1, object o2, object o3) { String s = String.Format(fmt, o1, o2, o3); WriteLine(Level.Info, s); }
         public static void Info(string fmt, object o1, object o2, object o3, object o4) { String s = String.Format(fmt, o1, o2, o3, o4); WriteLine(Level.Info, s); }
- 
+
         public static void Warn(string s) { WriteLine(Level.Warn, s); }
         public static void Warn(string fmt, object o1) { String s = String.Format(fmt, o1); WriteLine(Level.Warn, s); }
         public static void Warn(string fmt, object o1, object o2) { String s = String.Format(fmt, o1, o2); WriteLine(Level.Warn, s); }
         public static void Warn(string fmt, object o1, object o2, object o3) { String s = String.Format(fmt, o1, o2, o3); WriteLine(Level.Warn, s); }
         public static void Warn(string fmt, object o1, object o2, object o3, object o4) { String s = String.Format(fmt, o1, o2, o3, o4); WriteLine(Level.Warn, s); }
- 
+
         public static void Error(string s) { WriteLine(Level.Error, s); }
         public static void Error(string fmt, object o1) { String s = String.Format(fmt, o1); WriteLine(Level.Error, s); }
         public static void Error(string fmt, object o1, object o2) { String s = String.Format(fmt, o1, o2); WriteLine(Level.Error, s); }
         public static void Error(string fmt, object o1, object o2, object o3) { String s = String.Format(fmt, o1, o2, o3); WriteLine(Level.Error, s); }
         public static void Error(string fmt, object o1, object o2, object o3, object o4) { String s = String.Format(fmt, o1, o2, o3, o4); WriteLine(Level.Error, s); }
- 
+
         public static void Fatal(string s) { WriteLine(Level.Fatal, s); }
         public static void Fatal(string fmt, object o1) { String s = String.Format(fmt, o1); WriteLine(Level.Fatal, s); }
         public static void Fatal(string fmt, object o1, object o2) { String s = String.Format(fmt, o1, o2); WriteLine(Level.Fatal, s); }
         public static void Fatal(string fmt, object o1, object o2, object o3) { String s = String.Format(fmt, o1, o2, o3); WriteLine(Level.Fatal, s); }
         public static void Fatal(string fmt, object o1, object o2, object o3, object o4) { String s = String.Format(fmt, o1, o2, o3, o4); WriteLine(Level.Fatal, s); }
- 
+
 
         public static void Close()
         {

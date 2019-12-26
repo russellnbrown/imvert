@@ -68,7 +68,7 @@ namespace imvert
             formatPD.Items.Add("No Change");
             formatPD.Items.Add("JPG");
             formatPD.Items.Add("PNG");
-            formatPD.SelectedIndex = 1;
+            formatPD.SelectedIndex = 0;// no change 
             useSubdirsCB.IsChecked = true;
             folderTB.Text = Settings1.Default.lastFolder;
 

@@ -35,7 +35,7 @@ namespace imvert
         //
         public static void ConsoleWrite(string s)
         {
-            MainWindow.Inst.console.Dispatcher.BeginInvoke(new Action(() => { MainWindow.Inst.console.Items.Add(s); }));
+            MainWindow.Inst.console.Dispatcher.BeginInvoke(new Action(() => { MainWindow.Inst.console.Items.Insert(0, s); }));
         }
     }
 }
