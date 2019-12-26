@@ -187,7 +187,7 @@ namespace imvert
 
             // All looks good...
 
-            console.Items.Add("Processing");
+            Common.ConsoleWrite("Processing");
             processor.AddTask(sourceDir, useSubDirs, maxAxis, renameTxt, saveType, backup);
             processBTN.Content = "Cancel";
 

@@ -134,6 +134,7 @@ namespace imvert
             walk(dtop);
             // Get here when finished. Set isRunning to false to indicate we are done
             isRunning = false;
+            Common.ConsoleWrite("Finished scan.");
         }
 
 
@@ -223,6 +224,7 @@ namespace imvert
             {
                 
             }
+           
         }
     }
 
